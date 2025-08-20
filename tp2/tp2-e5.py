@@ -15,12 +15,12 @@ def encontrarCentro(num, cant):
     return int(cadena[inicio:fin])
 
 
-class LinealCongruencial:
+class CongruencialMultiplicativo:
 
-    def __init__(self, semilla, a, c, m=pow(2, 8)):
+    def __init__(self, semilla, a, m=pow(2, 8)):
         self.semilla = semilla
         self.a = a
-        self.c = c
+        self.c = 0
         self.m = m
         self.normalizador = m - 1
         self.aleatorios = []
@@ -80,7 +80,7 @@ class LinealCongruencial:
 
 
 
-algoritmo1 = LinealCongruencial(15, 8, 16, 100)
+algoritmo1 = CongruencialMultiplicativo(17, 203, pow(10, 5))
 pseudoaleatorios1 = algoritmo1.generar()
 
 print('1er Algoritmo')
@@ -90,7 +90,7 @@ print(f'La media de la secuencia es de {algoritmo1.obtenerMedia()}')
 print(f'La varianza de la secuencia es de {algoritmo1.obtenerVarianza()}')
 
 
-algoritmo2 = LinealCongruencial(13, 50, 17, 64)
+algoritmo2 = CongruencialMultiplicativo(19, 211, pow(10, 3))
 pseudoaleatorios2 = algoritmo2.generar()
 
 print('2do Algoritmo')
