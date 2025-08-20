@@ -1,0 +1,3 @@
+
+es importante saber la semilla que usa la maquina para generar los números
+tomar como input una serie de números y en base a esto calcular en que parte de la secuencia está la máquina del casino
