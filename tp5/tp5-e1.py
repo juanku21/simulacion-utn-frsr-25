@@ -1,6 +1,7 @@
 
 import random as rd
 import numpy as np
+from prettytable import PrettyTable
 
 """
 Simula el tiempo que tarda un operario en realizar una tarea
@@ -19,9 +20,9 @@ def calcular_acumulada(array):
     return res
 
 
-def restar_arrays(array1, array2):
+def tiempo_espera_piezas(array1, array2):
     if len(array1) == len(array2):
-        res = []
+        res = [0]
         for i in range(len(array2) - 1):
             resta = array2[i] - array1[i+1] 
             if resta < 0:
@@ -89,44 +90,102 @@ def simular_tiempo_operario_B():
     return rangos[-1][2]  # Retorna el último tiempo si p = 1.0
 
 
-print(simular_tiempo_operario_A())
-print(simular_tiempo_operario_B())
 
-tiempos_a = []
-tiempos_b = []
-
-for i in range(20):
-    tiempos_a.append(simular_tiempo_operario_A())
-    tiempos_b.append(simular_tiempo_operario_B())
-
-matrix = np.matrix([tiempos_a, tiempos_b])
-
-print(f'El tiempo total de A luego de 20 iteraciones es {sum(tiempos_a)}')
-print(f'El tiempo total de B luego de 20 iteraciones es {sum(tiempos_b)}')
-
-print(matrix)
+'''
+Simulamos ahora la línea de producción desde el punto de vista del Empleado B.
+Considerando en tiempo = 0 en nuestro sistema de referencia, cuando este empleado 
+recibe la primera pieza. 
+'''
 
 
 
-tiempos_a[0] = 0
-disponibles_para_b = calcular_acumulada(tiempos_a)
-iniciacion_b = calcular_acumulada([0] + tiempos_b[0: len(tiempos_b) - 1])
-finalizacion_b = calcular_acumulada(tiempos_b)
+class LineaProduccion:
 
-print(disponibles_para_b)
-print(iniciacion_b)
-print(finalizacion_b)
-print(restar_arrays(disponibles_para_b, finalizacion_b))
+    def __init__(self, iteraciones):
+        self.interaciones = iteraciones
+        self.tiempos_a = []
+        self.tiempos_b = []
 
-# class Estadisticas:
-#     def __init__(self, tA, tB):
-#         self.tA = tA
-#         self.tB = tB
-#         self.transporte = 0.5
-#         self.tiempo = 0
+        self.disponible_para_b = []
+        self.comienza_b = []
+        self.finaliza_b = []
+        self.ocioso_b = []
+        self.espera = []
+        self.piezas_procesando_b = []
+        self.piezas_en_espera = 0 
 
-#     def calcular():
-#         return "hola"
 
+    def simular(self):
+
+        for i in range(self.interaciones):
+            tiempo_a = simular_tiempo_operario_A()
+            tiempo_b = simular_tiempo_operario_B()
+
+            print(tiempo_a, tiempo_b)
+
+            self.tiempos_a.append(tiempo_a)
+            self.tiempos_b.append(tiempo_b)
+
+            piezas_operadas_b = 0
+
+            if i == 0:
+                self.disponible_para_b.append(0)
+                self.comienza_b.append(0)
+                self.finaliza_b.append(tiempo_b)
+                self.ocioso_b.append(0)
+                self.espera.append(0)
+                self.piezas_procesando_b.append(0)
+
+            else:
+                self.disponible_para_b.append(round(self.disponible_para_b[-1] + tiempo_a, 2))
+
+                espera = self.finaliza_b[-1] - self.disponible_para_b[-1]
+                espera = round(espera, 2)
+
+                if espera >= 0:
+                    self.espera.append(espera)
+                    self.ocioso_b.append(0)
+                    self.comienza_b.append(self.finaliza_b[-1])
+                    self.finaliza_b.append(round(self.comienza_b[-1] + tiempo_b, 2))
+                    self.piezas_en_espera += 1
+
+                else:
+                    self.espera.append(0)
+                    self.ocioso_b.append(-1 * espera)
+                    self.comienza_b.append(self.disponible_para_b[-1])
+                    self.finaliza_b.append(round(self.comienza_b[-1] + tiempo_b, 2))
+                    self.piezas_en_espera = 0
+
+                self.piezas_procesando_b.append(self.piezas_en_espera)
+
+    def get_tabla(self):
+        tabla = PrettyTable()
+        tabla.field_names = ['Disponibles para B a las', 'B comienza a las', 'B termina a las', 'Ocioso B', 'Espera', 'Piezas procesando en B']
+
+        for i in range(self.interaciones):
+            tabla.add_row([
+                self.disponible_para_b[i], 
+                self.comienza_b[i], 
+                self.finaliza_b[i], 
+                self.ocioso_b[i], 
+                self.espera[i],
+                self.piezas_procesando_b[i]
+            ])
+
+        return tabla
+    
+    def calcular_ocio_b(self):
+        return calcular_acumulada(self.ocioso_b)
+    
+    def calcular_espera_piezas(self):
+        return calcular_acumulada(self.espera)
+    
+    
+
+
+
+linea_produccion = LineaProduccion(20)
+linea_produccion.simular()
+print(linea_produccion.get_tabla())
 
 
