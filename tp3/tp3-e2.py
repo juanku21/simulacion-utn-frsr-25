@@ -13,8 +13,6 @@ for i in range(pow(10, 6)):
     else:
         azul += 1
 
-print(azul)
-print(blanco)
 
 proporcion_azul = azul / pow(10, 6)
 
