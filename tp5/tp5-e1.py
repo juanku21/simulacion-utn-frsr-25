@@ -126,8 +126,6 @@ class LineaProduccion:
             self.tiempos_a.append(tiempo_a)
             self.tiempos_b.append(tiempo_b)
 
-            piezas_operadas_b = 0
-
             if i == 0:
                 self.disponible_para_b.append(0)
                 self.comienza_b.append(0)
@@ -142,12 +140,21 @@ class LineaProduccion:
                 espera = self.finaliza_b[-1] - self.disponible_para_b[-1]
                 espera = round(espera, 2)
 
-                if espera >= 0:
+                if espera >= 0 and self.piezas_en_espera == 0:
                     self.espera.append(espera)
                     self.ocioso_b.append(0)
                     self.comienza_b.append(self.finaliza_b[-1])
                     self.finaliza_b.append(round(self.comienza_b[-1] + tiempo_b, 2))
-                    self.piezas_en_espera += 1
+                    self.piezas_en_espera = 1
+
+                elif espera >= 0 and self.piezas_en_espera >= 1:
+                    self.espera.append(espera)
+                    self.ocioso_b.append(0)
+                    self.comienza_b.append(self.finaliza_b[-1])
+                    self.finaliza_b.append(round(self.comienza_b[-1] + tiempo_b, 2))
+
+                    if self.espera[-1] > (self.disponible_para_b[i] - self.disponible_para_b[i-1]):
+                        self.piezas_en_espera += 1
 
                 else:
                     self.espera.append(0)
@@ -174,18 +181,49 @@ class LineaProduccion:
 
         return tabla
     
+    def get_kpis(self):
+        kpis = PrettyTable()
+        kpis.field_names = ['Tiempo ocio b', 'Tiempo espera b', 'Prom ensambles A/B', 'Prom Tasa Producción A', 'Prom Tasa Producción B', 'Prom Tasa Producción A+B']
+    
+        kpis.add_row([
+            self.calcular_ocio_b(),
+            self.calcular_espera_b(),
+            self.promedio_esambles_a_b(),
+            self.tasa_promedio_a(),
+            self.tasa_promedio_b(),
+            self.tasa_promedio_a_b(),
+        ])
+
+        return kpis
+
     def calcular_ocio_b(self):
-        return calcular_acumulada(self.ocioso_b)
+        return calcular_acumulada(self.ocioso_b)[-1]
     
-    def calcular_espera_piezas(self):
-        return calcular_acumulada(self.espera)
+    def calcular_espera_b(self):
+        return calcular_acumulada(self.espera)[-1]
     
-    
+    def promedio_esambles_a_b(self):
+        res = self.calcular_espera_b() / self.disponible_para_b[-1]
+        res = round(res, 6)
+        return res
 
+    def tasa_promedio_a(self):
+        res = 20 * 60 / calcular_acumulada(self.tiempos_a)[-1]
+        res = round(res, 6)
+        return res
 
+    def tasa_promedio_b(self):
+        res = 20 * 60 / calcular_acumulada(self.tiempos_b)[-1]
+        res = round(res, 6)
+        return res
+
+    def tasa_promedio_a_b(self):
+        res = 20 * 60 / self.finaliza_b[-1]
+        res = round(res, 6)
+        return res
 
 linea_produccion = LineaProduccion(20)
 linea_produccion.simular()
 print(linea_produccion.get_tabla())
-
+print(linea_produccion.get_kpis())
 
