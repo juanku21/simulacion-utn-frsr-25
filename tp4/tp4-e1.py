@@ -38,7 +38,6 @@ cuadraticos_medio = []
 
 
 for i in range(pasos):
-
     caminante.mover()
     dominio.append(i)
     pos_x = caminante.get_posicion()
@@ -46,14 +45,13 @@ for i in range(pasos):
 
     cuadratico += pow(pos_x, 2)
     cuadraticos.append(cuadratico)
-
     cuadraticos_medio.append(promedio(cuadraticos))
 
 
-
-# ARREGLAR DESPLAZAMIENTO CUADRÁTICO MEDIO
 print(f'El desplazamiento cuadrático medio es de {cuadraticos_medio[-1]}')
 
+
+# 1er gráfico - Posición X vs Tiempo
 
 plt.figure(figsize=(10, 6))
 plt.plot(dominio, imagen, 'b-o')
@@ -66,6 +64,7 @@ plt.grid(True)
 plt.show()
 
 
+# 2do gráfico - Desplazamiento Cuadrático Medio vs Tiempo
 
 plt.figure(figsize=(10, 6)) 
 plt.plot(dominio, cuadraticos_medio, 'r-o')  

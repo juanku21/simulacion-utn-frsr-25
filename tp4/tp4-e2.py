@@ -40,7 +40,8 @@ for i in range(pasos):
 
 
 
-# Crear el histograma
+# Crear el histograma (Frecuencias relativas de posiciones finales)
+
 plt.figure(figsize=(10, 6))
 plt.hist(posiciones_finales, bins='auto', density=True, alpha=0.7, color='blue', edgecolor='black')
 
