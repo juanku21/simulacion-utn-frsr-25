@@ -71,7 +71,7 @@ plt.plot(dominio, cuadraticos_medio, 'r-o')
 
 plt.title('Desplazamiento Cuadrático vs Tiempo')
 plt.xlabel('Unidad de tiempo')
-plt.ylabel('X^2')
+plt.ylabel('<X^2>')
 plt.grid(True)
 
 plt.show()
