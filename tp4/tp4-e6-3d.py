@@ -136,7 +136,7 @@ class BoxCounting:
                         break
             
             numero_cajas.append(cajas_dla)
-            sizes.append(int(math.sqrt(prueba)))
+            sizes.append(int(pow(prueba, 1/3)))
 
         return [sizes, numero_cajas]
 
@@ -146,7 +146,7 @@ def get_neighbors(x, y, z):
 
 def generate_dla():
 
-    print(f"Generando DLA con {NUM_WALKERS} caminantes en un plano de {SIZE}x{SIZE}...")
+    print(f"Generando DLA con {NUM_WALKERS} caminantes en un espacio 3D de {SIZE}x{SIZE}x{SIZE}...")
     
     # Inicializar grid de puntos
     all_points = [[[Point(x, y, z) for z in range(SIZE)] for y in range(SIZE)] for x in range(SIZE)]
@@ -195,32 +195,6 @@ def generate_dla():
                 break
 
     return all_points, dla_points_list
-
-def plot_dla(all_points, dla_points):
-    plt.figure(figsize=(10, 10), facecolor='black')
-    ax = plt.gca()
-    ax.set_facecolor('black')
-
-    # Extraer coordenadas de puntos DLA
-    x_coords = [p[0] for p in dla_points]
-    y_coords = [p[1] for p in dla_points]
-    z_coords = [p[2] for p in dla_points]
-
-    plt.scatter(x_coords, y_coords, s=1, color='lightgray', marker='s')
-    
-    plt.title("Estructura DLA generada por Agregación Limitada por Difusión", color='white')
-    plt.xlabel("Posición X", color='white')
-    plt.ylabel("Posición Y", color='white')
-    
-    ax.tick_params(axis='x', colors='white')
-    ax.tick_params(axis='y', colors='white')
-
-    plt.xlim(0, SIZE)
-    plt.ylim(0, SIZE)
-    plt.axis('off')
-    plt.gca().set_aspect('equal', adjustable='box')
-    
-    plt.show()
 
 
 def plot_dla_3d(all_points, dla_points):
