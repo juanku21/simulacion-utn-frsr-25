@@ -156,7 +156,7 @@ def generate_dla():
         current_y = np.clip(start_y, 0, SIZE - 1)
 
         MOVEMENTS = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-        PROBABILITIES = [0.4, 0.1, 0.3, 0.2]
+        PROBABILITIES = [0.24, 0.24, 0.24, 0.28]
 
         while True:
 
