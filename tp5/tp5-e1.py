@@ -222,7 +222,7 @@ class LineaProduccion:
         res = round(res, 6)
         return res
 
-linea_produccion = LineaProduccion(20)
+linea_produccion = LineaProduccion(100)
 linea_produccion.simular()
 print(linea_produccion.get_tabla())
 print(linea_produccion.get_kpis())

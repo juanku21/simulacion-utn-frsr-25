@@ -21,98 +21,6 @@ class Point:
     def __str__(self):
         return f"Point({self.x}, {self.y}, DLA: {self.is_dla})"
 
-class BoxCounting:
-
-    def __init__(self, points):
-        
-        self.pruebas = []
-        self.points = points
-
-        total = 0
-        for row in self.points:
-            total += len(row)
-
-        current_size = int(math.sqrt(total))
-
-        while current_size >= 2:
-            longitud = pow(current_size, 2)
-            self.pruebas.append(longitud)
-            current_size = int(current_size / 2)
-    
-
-    def dividir_en_cajas(self, cantidad_por_subgrupo):
-
-        if not self.points or not self.points[0]:
-            return []
-
-        num_filas = len(self.points)
-        num_columnas = len(self.points[0])
-
-        subgrupo_alto = 0
-        subgrupo_ancho = 0
-
-        for i in range(1, int(cantidad_por_subgrupo**0.5) + 1):
-            if cantidad_por_subgrupo % i == 0:
-                j = cantidad_por_subgrupo // i
-                if i <= num_filas and j <= num_columnas:
-                    subgrupo_alto = i
-                    subgrupo_ancho = j
-                if j <= num_filas and i <= num_columnas: 
-                    if j > subgrupo_alto: 
-                        subgrupo_alto = j
-                        subgrupo_ancho = i
-
-        if subgrupo_alto == 0 or subgrupo_ancho == 0:
-            print(f"Advertencia: No se pueden formar subgrupos de {cantidad_por_subgrupo} puntos con una forma rectangular dentro de la cuadrícula existente.")
-            print("Intentando encontrar el mayor subgrupo rectangular posible...")
-
-            max_area = 0
-            for r in range(1, num_filas + 1):
-                for c in range(1, num_columnas + 1):
-                    area = r * c
-                    if area <= cantidad_por_subgrupo and area > max_area:
-                        max_area = area
-                        subgrupo_alto = r
-                        subgrupo_ancho = c
-            if max_area == 0:
-                return []
-            print(f"Se utilizará un subgrupo de {subgrupo_alto}x{subgrupo_ancho} = {subgrupo_alto * subgrupo_ancho} puntos.")
-
-
-        subgrupos_resultantes = []
-
-        for r_inicio in range(0, num_filas, subgrupo_alto):
-            for c_inicio in range(0, num_columnas, subgrupo_ancho):
-
-                if r_inicio + subgrupo_alto <= num_filas and c_inicio + subgrupo_ancho <= num_columnas:
-                    subgrupo_actual = []
-                    for r in range(r_inicio, r_inicio + subgrupo_alto):
-                        for c in range(c_inicio, c_inicio + subgrupo_ancho):
-                            subgrupo_actual.append(self.points[r][c])
-                    subgrupos_resultantes.append(subgrupo_actual)
-
-        return subgrupos_resultantes
-
-
-    def get_datos(self):
-
-        sizes = []
-        numero_cajas = []
-
-        for prueba in self.pruebas:
-            division = self.dividir_en_cajas(prueba)
-            cajas_dla = 0
-            for caja in division:
-                for point in caja:
-                    if point.is_dla == True:
-                        cajas_dla += 1
-                        break
-            
-            numero_cajas.append(cajas_dla)
-            sizes.append(int(math.sqrt(prueba)))
-
-        return [sizes, numero_cajas]
-
 
 class Caminante:
 
@@ -264,8 +172,6 @@ for i in range(cantidad_m):
     caminantes.append(caminante)
 
 pasos = 100
-posiciones_finales_x = []
-posiciones_finales_y = []
 
 for i in range(pasos):
     for caminante in caminantes:
