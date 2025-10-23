@@ -1,5 +1,16 @@
 
 import random as rd
+import math
+import matplotlib.pyplot as plt
+
+def choose_min(n, m):
+    if n < m:
+        return n
+    elif n == m:
+        return n
+    else: 
+        return m
+
 
 class Vector:
 
@@ -43,30 +54,68 @@ class Vector:
         return cant
 
     def get_porcentaje_libres(self):
-        return round(self.get_cantidad_libres() / self.get_size(), 2)
+        return round(self.get_cantidad_libres() / self.get_size(), 5)
     
     def get_porcentaje_ocupados(self):
-        return round(self.get_cantidad_ocupados() / self.get_size(), 2)
+        return round(self.get_cantidad_ocupados() / self.get_size(), 5)
 
 
-m = 1000
-wabs = 0.6
-wdes = 0.3
+class Simulacion:
+    
+    def __init__(self, presion, iteraciones):
+        self.presion = presion
+        self.iteraciones = iteraciones
+        self.vector = Vector(1000)
 
-vector = Vector(1000)
+    def calcular_constantes(self):
+        self.wdes = choose_min(1, pow(math.e, -1 * self.presion))
+        self.wabs = choose_min(1, pow(math.e, self.presion))
+    
+    def simular(self):
 
-for i in range(m):
+        self.calcular_constantes()
 
-    casillero = rd.randint(0, vector.get_size() - 1)
+        for i in range(self.iteraciones):
 
-    num = rd.random()
+            casillero = rd.randint(0, self.vector.get_size() - 1)
 
-    if (num < wabs) and (vector.check_disponibilidad(casillero) == True):
-        vector.agregar(casillero)
-    elif (num < wdes) and (vector.check_disponibilidad(casillero) == False):
-        vector.despegar(casillero)
+            num = rd.random()
+
+            if (num < self.wabs) and (self.vector.check_disponibilidad(casillero) == True):
+                self.vector.agregar(casillero)
+            elif (num < self.wdes) and (self.vector.check_disponibilidad(casillero) == False):
+                self.vector.despegar(casillero)
+    
+    def get_libres(self):
+        return self.vector.get_porcentaje_libres()
+    
+    def get_ocupados(self):
+        return self.vector.get_porcentaje_ocupados()
+    
+    def get_presion(self):
+        return self.presion
 
 
-print(f'El porcentaje de casilleros libres es {vector.get_porcentaje_libres()}')
-print(f'El porcentaje de casilleros ocupados es {vector.get_porcentaje_ocupados()}')
+# Inicio del programa (código de principal)
 
+x, libres, ocupados = [[], [], []]
+
+for i in range(-10, 10):
+    simulacion = Simulacion(i, pow(10,6))
+    simulacion.simular()
+    x.append(i)
+    libres.append(simulacion.get_libres())
+    ocupados.append(simulacion.get_ocupados())
+
+
+plt.figure(figsize=(10, 6))  
+plt.plot(x, libres, 'b-o') 
+plt.plot(x, ocupados, 'r-o') 
+
+plt.title('Casilleros')
+plt.xlabel('Presion')
+plt.ylabel('Proporsión')
+plt.grid(True)
+plt.legend('Presión vs Proporción de casilleros libres y ocupados')
+
+plt.show()
