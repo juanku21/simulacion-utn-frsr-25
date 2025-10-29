@@ -11,6 +11,13 @@ def choose_min(n, m):
     else: 
         return m
 
+def promedio(array):
+    return sum(array) / len(array)
+
+def calcular_isoterma(u):
+    result = pow(math.e, u) / (1 + pow(math.e, u))
+    return result
+
 
 class Vector:
 
@@ -62,9 +69,9 @@ class Vector:
 
 class Simulacion:
     
-    def __init__(self, presion, iteraciones):
+    def __init__(self, presion, pasos_montecarlo):
         self.presion = presion
-        self.iteraciones = iteraciones
+        self.pasos_montecarlo = pasos_montecarlo
         self.vector = Vector(1000)
 
     def calcular_constantes(self):
@@ -75,22 +82,31 @@ class Simulacion:
 
         self.calcular_constantes()
 
-        for i in range(self.iteraciones):
+        self.porcentaje_libres = []
+        self.porcentaje_ocupados = []
 
-            casillero = rd.randint(0, self.vector.get_size() - 1)
+        for i in range(self.pasos_montecarlo):
 
-            num = rd.random()
+            if i > 10 and self.pasos_montecarlo % i == 0:
+                self.porcentaje_libres.append(self.vector.get_porcentaje_libres())
+                self.porcentaje_ocupados.append(self.vector.get_porcentaje_ocupados())
 
-            if (num < self.wabs) and (self.vector.check_disponibilidad(casillero) == True):
-                self.vector.agregar(casillero)
-            elif (num < self.wdes) and (self.vector.check_disponibilidad(casillero) == False):
-                self.vector.despegar(casillero)
+            for j in range(self.vector.get_size()):
+
+                casillero = rd.randint(0, self.vector.get_size() - 1)
+
+                num = rd.random()
+
+                if (num < self.wabs) and (self.vector.check_disponibilidad(casillero) == True):
+                    self.vector.agregar(casillero)
+                elif (num < self.wdes) and (self.vector.check_disponibilidad(casillero) == False):
+                    self.vector.despegar(casillero)
     
     def get_libres(self):
-        return self.vector.get_porcentaje_libres()
+        return promedio(self.porcentaje_libres)
     
     def get_ocupados(self):
-        return self.vector.get_porcentaje_ocupados()
+        return promedio(self.porcentaje_ocupados)
     
     def get_presion(self):
         return self.presion
@@ -99,18 +115,25 @@ class Simulacion:
 # Inicio del programa (código de principal)
 
 x, libres, ocupados = [[], [], []]
+isoterma = []
+
 
 for i in range(-10, 10):
-    simulacion = Simulacion(i, pow(10,6))
+    simulacion = Simulacion(i, pow(10,3))
     simulacion.simular()
     x.append(i)
     libres.append(simulacion.get_libres())
     ocupados.append(simulacion.get_ocupados())
 
+    isoterma.append(calcular_isoterma(i))
+
+
+# Gráfico de Simulación
 
 plt.figure(figsize=(10, 6))  
 plt.plot(x, libres, 'b-o') 
 plt.plot(x, ocupados, 'r-o') 
+plt.plot(x, isoterma, 'g-o') 
 
 plt.title('Casilleros')
 plt.xlabel('Presion')
@@ -119,3 +142,17 @@ plt.grid(True)
 plt.legend('Presión vs Proporción de casilleros libres y ocupados')
 
 plt.show()
+
+
+# Gráfico de Isoterma de Langmuir
+
+# plt.figure(figsize=(10, 6))  
+# plt.plot(x, isoterma, 'b-o') 
+
+# plt.title('Calculo de Isoterma vs Presión')
+# plt.xlabel('Presion')
+# plt.ylabel('Isoterma')
+# plt.grid(True)
+# plt.legend('Calculo de Isoterma vs Presión')
+
+# plt.show()
