@@ -121,8 +121,6 @@ class LineaProduccion:
             tiempo_a = simular_tiempo_operario_A()
             tiempo_b = simular_tiempo_operario_B()
 
-            print(tiempo_a, tiempo_b)
-
             self.tiempos_a.append(tiempo_a)
             self.tiempos_b.append(tiempo_b)
 
@@ -222,7 +220,7 @@ class LineaProduccion:
         res = round(res, 6)
         return res
 
-linea_produccion = LineaProduccion(100)
+linea_produccion = LineaProduccion(20)
 linea_produccion.simular()
 print(linea_produccion.get_tabla())
 print(linea_produccion.get_kpis())
