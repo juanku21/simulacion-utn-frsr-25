@@ -68,7 +68,6 @@ class PCG:
     def __generar_numero(self):
         rotar = rotar_binario_dinamico(self.estado, int(bin(self.estado)[2:7], 2), 'derecha')
         n = int(bin(rotar ^ self.y), 2)
-        print(n, len(bin(n)[2:]))
         return n
     
     def __normalizar(self):

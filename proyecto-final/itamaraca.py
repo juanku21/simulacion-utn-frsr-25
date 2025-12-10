@@ -26,8 +26,6 @@ class GeneradorItamaraca:
             n = abs(n)
             n = int(abs(self.num - (n * self.racional))) % self.num
 
-            print(n)
-
             if n in self.aleatorios or index == pow(10, 5):
                 generar = False
                 self.__normalizar()

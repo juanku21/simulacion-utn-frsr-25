@@ -112,8 +112,9 @@ class MersenneTwister:
         return self.aleatorios
     
     def __normalizar(self):
+        max = sorted(self.aleatorios, reverse=True)[0]
         for z in range(len(self.aleatorios)):
-            self.aleatorios[z] = self.aleatorios[z] / pow(2, 32)
+            self.aleatorios[z] = self.aleatorios[z] / max
 
     def obtenerMedia(self):
         if self.aleatorios:
